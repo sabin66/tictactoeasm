@@ -1,0 +1,427 @@
+data segment
+new_line db 13, 10, "$"
+
+game_draw db "1|2|3", 13, 10
+db "4|5|6", 13, 10
+db "7|8|9", 13, 10, "$"
+banner db "__________.__        __                              __   .__         ",13,10
+db "\______   \__| _____/  |________  ______  _  _______|  | _|__|        ",13,10
+db " |     ___/  |/  _ \   __\_  __ \/  _ \ \/ \/ /  ___/  |/ /  |        ",13,10
+db " |    |   |  (  <_> )  |  |  | \(  <_> )     /\___ \|    <|  |        ",13,10
+db " |____|   |__|\____/|__|  |__|   \____/ \/\_//______>__|_ \__|        ",13,10
+db "                                                   _     \/           ",13,10
+db "  _________     ___.   .__                        /_/        ___   ___",13,10
+db " /   _____/ ____\_ |__ |__| ________________    ____   _____|  | _|__|",13,10
+db " \_____  \ /  _ \| __ \|  |/ __ \_  __ \__  \  /    \ /  ___/  |/ /  |",13,10
+db " /        (  <_> ) \_\ \  \  ___/|  | \// __ \|   |  \\___ \|    <|  |",13,10
+db "/_________/\____/|___  /__|\___  >__|  (____  /___|  /______>__|_ \__|",13,10
+db "                     \/        \/           \/     \/            \/   ",13,10
+db "                              __        __      __                    ",13,10
+db "      _____________  ____    |__| ____ |  | ___/  |_                  ",13,10
+db "      \____ \_  __ \/  _ \   |  |/ __ \|  |/ /\   __\                 ",13,10
+db "      |  |_> >  | \(  <_> )  |  \  ___/|    <  |  |                   ",13,10
+db "      |   __/|__|   \____/\__|  |\___  >__|_ \ |__|                   ",13,10
+db "      |__|               \______|    \/     \/                        ",13,10, "$"
+
+game_pointer db 9 DUP(0)
+
+win_flag db 0
+player db "0$"
+moves_counter db 0
+
+game_over_message db "TIC-TAC-TOE", 13, 10, "$"
+game_start_message db "TIC-TAC-TOE", 13, 10, "$"
+player_message db "PLAYER $"
+win_message db " WINS!$"
+type_message db "TYPE A POSITION: $"
+wrong_position_message db 13,10,"WRONG POSITION! YOU MISSED YOUR TURN! $"
+game_end_draw_message db 13,10,"-------------GAME ENDED------------ DRAW!---------$"
+which_player_message db "PLAYER 0 - X, PLAYER 1 - O",13,10,"$"
+ends
+
+stack segment
+dw   128  dup(?)
+ends
+
+extra segment
+
+ends
+
+code segment
+start:
+; set segment registers
+mov     ax, data
+mov     ds, ax
+mov     ax, extra
+mov     es, ax
+; banner
+lea     dx, banner
+call print
+; waiting for key
+call read_keyboard
+; game start
+call    set_game_pointer
+
+main_loop:
+call    clear_screen
+
+lea     dx, game_start_message
+call    print
+
+lea     dx, new_line
+call    print
+
+lea     dx, player_message
+call    print
+
+lea     dx, player
+call    print
+
+lea     dx, new_line
+call    print
+
+lea     dx,which_player_message
+call    print
+
+lea     dx, game_draw
+call    print
+
+lea     dx, new_line
+call    print
+
+lea     dx, type_message
+call    print
+
+mov     al,moves_counter
+cmp     al,9
+je      game_end_draw
+
+mov     moves_counter,al
+
+; read draw position
+call    read_keyboard
+
+; calculate draw position
+sub     al, 49
+mov     bh, 0
+mov     bl, al
+
+call    update_draw
+
+call    check
+
+; check if game ends
+cmp     win_flag, 1
+je      game_over
+
+call    change_player
+
+jmp     main_loop
+
+
+change_player:
+lea     si, player
+xor     ds:[si], 1
+
+ret
+
+
+update_draw:
+mov     bl, game_pointer[bx]
+mov     bh, 0
+
+lea     si, player
+
+cmp     ds:[si], "0"
+je      draw_x
+
+cmp     ds:[si], "1"
+je      draw_o
+
+draw_x:
+cmp     ds:[bx], "x"
+je      position_taken
+cmp     ds:[bx], "o"
+je      position_taken
+mov     cl, "x"
+jmp     update
+
+draw_o:
+cmp     ds:[bx], "x"
+je      position_taken
+cmp     ds:[bx],"o"
+je      position_taken
+mov     cl, "o"
+jmp     update
+
+update:
+mov     ds:[bx], cl
+mov     al,moves_counter
+inc     al
+mov     moves_counter,al
+
+ret
+
+
+check:
+call    check_line
+ret
+
+
+check_line:
+mov     cx, 0
+
+check_line_loop:
+cmp     cx, 0
+je      first_line
+
+cmp     cx, 1
+je      second_line
+
+cmp     cx, 2
+je      third_line
+
+call    check_column
+ret
+
+first_line:
+mov     si, 0
+jmp     do_check_line
+
+second_line:
+mov     si, 3
+jmp     do_check_line
+
+third_line:
+mov     si, 6
+jmp     do_check_line
+
+do_check_line:
+inc     cx
+
+mov     bh, 0
+mov     bl, game_pointer[si]
+mov     al, ds:[bx]
+cmp     al, "_"
+je      check_line_loop
+
+inc     si
+mov     bl, game_pointer[si]
+cmp     al, ds:[bx]
+jne     check_line_loop
+
+inc     si
+mov     bl, game_pointer[si]
+cmp     al, ds:[bx]
+jne     check_line_loop
+
+
+mov     win_flag, 1
+ret
+
+
+
+check_column:
+mov     cx, 0
+
+check_column_loop:
+cmp     cx, 0
+je      first_column
+
+cmp     cx, 1
+je      second_column
+
+cmp     cx, 2
+je      third_column
+
+call    check_diagonal
+ret
+
+first_column:
+mov     si, 0
+jmp     do_check_column
+
+second_column:
+mov     si, 1
+jmp     do_check_column
+
+third_column:
+mov     si, 2
+jmp     do_check_column
+
+do_check_column:
+inc     cx
+
+mov     bh, 0
+mov     bl, game_pointer[si]
+mov     al, ds:[bx]
+cmp     al, "_"
+je      check_column_loop
+
+add     si, 3
+mov     bl, game_pointer[si]
+cmp     al, ds:[bx]
+jne     check_column_loop
+
+add     si, 3
+mov     bl, game_pointer[si]
+cmp     al, ds:[bx]
+jne     check_column_loop
+
+
+mov     win_flag, 1
+ret
+
+
+check_diagonal:
+mov     cx, 0
+
+check_diagonal_loop:
+cmp     cx, 0
+je      first_diagonal
+
+cmp     cx, 1
+je      second_diagonal
+
+ret
+
+first_diagonal:
+mov     si, 0
+mov     dx, 4
+jmp     do_check_diagonal
+
+second_diagonal:
+mov     si, 2
+mov     dx, 2
+jmp     do_check_diagonal
+
+do_check_diagonal:
+inc     cx
+
+mov     bh, 0
+mov     bl, game_pointer[si]
+mov     al, ds:[bx]
+cmp     al, "_"
+je      check_diagonal_loop
+
+add     si, dx
+mov     bl, game_pointer[si]
+cmp     al, ds:[bx]
+jne     check_diagonal_loop
+
+add     si, dx
+mov     bl, game_pointer[si]
+cmp     al, ds:[bx]
+jne     check_diagonal_loop
+
+
+mov     win_flag, 1
+ret
+
+
+game_over:
+call    clear_screen
+
+lea     dx, game_start_message
+call    print
+
+lea     dx, new_line
+call    print
+
+lea     dx, game_draw
+call    print
+
+lea     dx, new_line
+call    print
+
+lea     dx, game_over_message
+call    print
+
+lea     dx, player_message
+call    print
+
+lea     dx, player
+call    print
+
+lea     dx, win_message
+call    print
+
+jmp     fim
+
+game_end_draw:
+call    clear_screen
+
+lea     dx, game_end_draw_message
+call    print
+
+jmp     fim
+
+
+set_game_pointer:
+lea     si, game_draw
+lea     bx, game_pointer
+
+mov     cx, 9
+
+loop_1:
+cmp     cx, 6
+je      add_1
+
+cmp     cx, 3
+je      add_1
+
+jmp     add_2
+
+add_1:
+add     si, 1
+jmp     add_2
+
+add_2:
+mov     ds:[bx], si
+add     si, 2
+
+inc     bx
+loop    loop_1
+
+ret
+
+print:      ; print dx content
+mov     ah, 9
+int     21h
+
+ret
+
+
+clear_screen:       ; get and set video mode
+mov     ah, 0fh
+int     10h
+
+mov     ah, 0
+int     10h
+
+ret
+
+
+read_keyboard:  ; read keybord and return content in ah
+mov     ah, 1
+int     21h
+
+ret
+
+position_taken:
+lea     dx, wrong_position_message
+call    print
+
+ret
+
+
+fim:
+jmp     fim
+
+code ends
+
+end start
+
+
+
+; [SOURCE]: C:\Users\DORIAN\Desktop\tictactoe_TEST.asm

@@ -1,0 +1,63 @@
+< THE SYMBOL TABLE >  tictactoe_TEST.exe_  --  emu8086 assembler version: 4.08 
+===================================================================================================
+Name                     	Offset    	Size      	Type      	Segment   
+===================================================================================================
+DATA                     	00000     	-5        	SEGMENT   	(ITSELF)  
+NEW_LINE                 	00000     	1         	VAR       	data      
+GAME_DRAW                	00003     	1         	VAR       	data      
+BANNER                   	00019     	1         	VAR       	data      
+GAME_POINTER             	0052A     	1         	VAR       	data      
+WIN_FLAG                 	00533     	1         	VAR       	data      
+PLAYER                   	00534     	1         	VAR       	data      
+MOVES_COUNTER            	00536     	1         	VAR       	data      
+GAME_OVER_MESSAGE        	00537     	1         	VAR       	data      
+GAME_START_MESSAGE       	00545     	1         	VAR       	data      
+PLAYER_MESSAGE           	00553     	1         	VAR       	data      
+WIN_MESSAGE              	0055B     	1         	VAR       	data      
+TYPE_MESSAGE             	00562     	1         	VAR       	data      
+WRONG_POSITION_MESSAGE   	00574     	1         	VAR       	data      
+GAME_END_DRAW_MESSAGE    	0059D     	1         	VAR       	data      
+WHICH_PLAYER_MESSAGE     	005D2     	1         	VAR       	data      
+STACK                    	0005F     	-5        	SEGMENT   	(ITSELF)  
+EXTRA                    	0006F     	-5        	SEGMENT   	(ITSELF)  
+CODE                     	0006F     	-5        	SEGMENT   	(ITSELF)  
+START                    	00000     	-1        	LABEL     	code      
+MAIN_LOOP                	00016     	-1        	LABEL     	code      
+CHANGE_PLAYER            	0007A     	-1        	LABEL     	code      
+UPDATE_DRAW              	00082     	-1        	LABEL     	code      
+DRAW_X                   	00097     	-1        	LABEL     	code      
+DRAW_O                   	000AD     	-1        	LABEL     	code      
+UPDATE                   	000C3     	-1        	LABEL     	code      
+CHECK                    	000CF     	-1        	LABEL     	code      
+CHECK_LINE               	000D3     	-1        	LABEL     	code      
+CHECK_LINE_LOOP          	000D6     	-1        	LABEL     	code      
+FIRST_LINE               	000E9     	-1        	LABEL     	code      
+SECOND_LINE              	000EE     	-1        	LABEL     	code      
+THIRD_LINE               	000F3     	-1        	LABEL     	code      
+DO_CHECK_LINE            	000F8     	-1        	LABEL     	code      
+CHECK_COLUMN             	00120     	-1        	LABEL     	code      
+CHECK_COLUMN_LOOP        	00123     	-1        	LABEL     	code      
+FIRST_COLUMN             	00136     	-1        	LABEL     	code      
+SECOND_COLUMN            	0013B     	-1        	LABEL     	code      
+THIRD_COLUMN             	00140     	-1        	LABEL     	code      
+DO_CHECK_COLUMN          	00145     	-1        	LABEL     	code      
+CHECK_DIAGONAL           	00171     	-1        	LABEL     	code      
+CHECK_DIAGONAL_LOOP      	00174     	-1        	LABEL     	code      
+FIRST_DIAGONAL           	0017F     	-1        	LABEL     	code      
+SECOND_DIAGONAL          	00187     	-1        	LABEL     	code      
+DO_CHECK_DIAGONAL        	0018F     	-1        	LABEL     	code      
+GAME_OVER                	001B9     	-1        	LABEL     	code      
+GAME_END_DRAW            	001EE     	-1        	LABEL     	code      
+SET_GAME_POINTER         	001F9     	-1        	LABEL     	code      
+LOOP_1                   	00202     	-1        	LABEL     	code      
+ADD_1                    	0020E     	-1        	LABEL     	code      
+ADD_2                    	00213     	-1        	LABEL     	code      
+PRINT                    	0021D     	-1        	LABEL     	code      
+CLEAR_SCREEN             	00222     	-1        	LABEL     	code      
+READ_KEYBOARD            	0022B     	-1        	LABEL     	code      
+POSITION_TAKEN           	00230     	-1        	LABEL     	code      
+FIM                      	00237     	-1        	LABEL     	code      
+===================================================================================================
+[ 21.01.2025  --  10:20:57 ] 
+< END >
+ 
