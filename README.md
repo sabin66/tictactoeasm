@@ -13,7 +13,7 @@ A simple implementation of the classic **Tic-Tac-Toe** game using x86 Assembly l
 ## Technologies
 
 - Language: x86 Assembly
-- Emulator: [emu8086](http://www.emu8086.com/)
+- Emulator: [emu8086]([http://www.emu8086.com/](https://emu8086-microprocessor-emulator.softonic.pl))
 
 ## How to Run
 
